@@ -13,12 +13,15 @@ if !exists("g:ackprg")
     let g:ackprg="ack -H --nocolor --nogroup --column"
 endif
 
-function! s:Ack(cmd, args)
+function! s:Ack(cmd, args, count)
     redraw
     echo "Searching ..."
 
-    " If no pattern is provided, search for the word under the cursor
-    if empty(a:args)
+    if a:count > 0
+        " then we've selected something in visual mode
+        let l:grepargs = shellescape(s:LastSelectedText())
+    elseif empty(a:args)
+        " If no pattern is provided, search for the word under the cursor
         let l:grepargs = expand("<cword>")
     else
         let l:grepargs = a:args
@@ -101,7 +104,22 @@ function! s:AckIgnore(bang, ...)
     echo 'Ack called as: '.g:ackprg
 endfunction
 
-command! -bang -nargs=* -complete=file Ack call s:Ack('grep<bang>',<q-args>)
+function! s:LastSelectedText()
+    let saved_cursor = getpos('.')
+
+    let original_reg      = getreg('z')
+    let original_reg_type = getregtype('z')
+
+    normal! gv"zy
+    let text = @z
+
+    call setreg('z', original_reg, original_reg_type)
+    call setpos('.', saved_cursor)
+
+    return text
+endfunction
+
+command! -bang -nargs=* -complete=file -range=0 Ack call s:Ack('grep<bang>',<q-args>, <count>)
 command! -bang -nargs=* -complete=file AckAdd call s:Ack('grepadd<bang>', <q-args>)
 command! -bang -nargs=* -complete=file AckFromSearch call s:AckFromSearch('grep<bang>', <q-args>)
 command! -bang -nargs=* -complete=file LAck call s:Ack('lgrep<bang>', <q-args>)

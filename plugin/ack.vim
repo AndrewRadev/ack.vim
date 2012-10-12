@@ -19,7 +19,7 @@ function! s:Ack(cmd, args, count)
 
     if a:count > 0
         " then we've selected something in visual mode
-        let l:grepargs = shellescape(s:LastSelectedText())
+        let l:grepargs = shellescape(fnameescape(s:LastSelectedText()))
     elseif empty(a:args)
         " If no pattern is provided, search for the word under the cursor
         let l:grepargs = expand("<cword>")

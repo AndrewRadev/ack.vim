@@ -1,5 +1,16 @@
 # ack.vim #
 
+This fork of `ack.vim` has the following differences over the official version:
+
+  - If `:Ack` is invoked when something is marked in visual mode, that
+    something is used as a search term
+  - Ability to manage options and ignore dirs a bit more easily with
+    `AckOption` and `AckIgnore`.
+
+See the docs for some more details.
+
+<hr />
+
 This plugin is a front for the Perl module
 [App::Ack](http://search.cpan.org/~petdance/ack/ack).  Ack can be used as a
 replacement for 99% of the uses of _grep_.  This plugin will allow you to run

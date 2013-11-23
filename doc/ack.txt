@@ -110,3 +110,7 @@ v                   open in vertical split.
 gv                  open in vertical split silently.
 
 q                   close the quickfix window.
+
+If you wish to turn them off, set g:ackmappings to 0: >
+  let g:ackmappings = 0
+<

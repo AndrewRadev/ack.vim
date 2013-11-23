@@ -6,6 +6,7 @@ This fork of `ack.vim` has the following differences over the official version:
     something is used as a search term.
   - Ability to manage options and ignore dirs a bit more easily with
     `AckOption` and `AckIgnore`.
+  - Ability to turn off quickfix window mappings by using `g:ackmappings`
 
 See the docs for more details.
 
@@ -97,6 +98,10 @@ In the quickfix window, you can use:
     v    to open in vertical split
     gv   to open in vertical split silently
     q    to close the quickfix window
+
+You can turn off these mappings by setting `g:ackmappings` to 0, like so:
+
+    let g:ackmappings = 0
 
 This Vim plugin is derived (and by derived, I mean copied, essentially) from
 Antoine Imbert's blog post [Ack and Vim

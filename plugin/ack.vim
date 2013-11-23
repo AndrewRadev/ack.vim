@@ -13,6 +13,10 @@ if !exists("g:ackprg")
     let g:ackprg="ack -H --nocolor --nogroup --column"
 endif
 
+if !exists('g:ackmappings')
+    let g:ackmappings = 1
+endif
+
 function! s:Ack(cmd, args, count)
     redraw
     echo "Searching ..."
@@ -51,13 +55,15 @@ function! s:Ack(cmd, args, count)
         botright copen
     endif
 
-    exec "nnoremap <silent> <buffer> q :ccl<CR>"
-    exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
-    exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
-    exec "nnoremap <silent> <buffer> o <CR>"
-    exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
-    exec "nnoremap <silent> <buffer> v <C-W><C-W><C-W>v<C-L><C-W><C-J><CR>"
-    exec "nnoremap <silent> <buffer> gv <C-W><C-W><C-W>v<C-L><C-W><C-J><CR><C-W><C-J>"
+    if g:ackmappings
+        exec "nnoremap <silent> <buffer> q :ccl<CR>"
+        exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
+        exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
+        exec "nnoremap <silent> <buffer> o <CR>"
+        exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
+        exec "nnoremap <silent> <buffer> v <C-W><C-W><C-W>v<C-L><C-W><C-J><CR>"
+        exec "nnoremap <silent> <buffer> gv <C-W><C-W><C-W>v<C-L><C-W><C-J><CR><C-W><C-J>"
+    endif
 
     " If highlighting is on, highlight the search keyword.
     if exists("g:ackhighlight")

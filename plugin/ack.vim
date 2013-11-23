@@ -29,12 +29,15 @@ if !exists("g:ack_lhandler")
   let g:ack_lhandler="botright lopen"
 endif
 
-function! s:Ack(cmd, args)
+function! s:Ack(cmd, args, count)
   redraw
   echo "Searching ..."
 
-  " If no pattern is provided, search for the word under the cursor
-  if empty(a:args)
+  if a:count > 0
+    " then we've selected something in visual mode
+    let l:grepargs = shellescape(fnameescape(s:LastSelectedText()))
+  elseif empty(a:args)
+    " If no pattern is provided, search for the word under the cursor
     let l:grepargs = expand("<cword>")
   else
     let l:grepargs = a:args . join(a:000, ' ')
@@ -95,64 +98,64 @@ function! s:AckFromSearch(cmd, args)
 endfunction
 
 function! s:GetDocLocations()
-    let dp = ''
-    for p in split(&rtp,',')
-        let p = p.'/doc/'
-        if isdirectory(p)
-            let dp = p.'*.txt '.dp
-        endif
-    endfor
-    return dp
+  let dp = ''
+  for p in split(&rtp,',')
+    let p = p.'/doc/'
+    if isdirectory(p)
+      let dp = p.'*.txt '.dp
+    endif
+  endfor
+  return dp
 endfunction
 
 function! s:AckHelp(cmd,args)
-    let args = a:args.' '.s:GetDocLocations()
-    call s:Ack(a:cmd,args)
+  let args = a:args.' '.s:GetDocLocations()
+  call s:Ack(a:cmd,args)
 endfunction
 
 function! s:AckOption(bang, ...)
-    for option in a:000
-        let remove      = (a:bang == '!')
-        let base_option = substitute(option, '^no', '', '')
-        let pattern     = '\v\s+--(no)?\V'.base_option
+  for option in a:000
+    let remove      = (a:bang == '!')
+    let base_option = substitute(option, '^no', '', '')
+    let pattern     = '\v\s+--(no)?\V'.base_option
 
-        if remove
-            let replacement = ''
-        else
-            let replacement = ' --'.option
-        endif
+    if remove
+      let replacement = ''
+    else
+      let replacement = ' --'.option
+    endif
 
-        if g:ackprg =~ pattern
-            let g:ackprg = substitute(g:ackprg, pattern, replacement, '')
-        else
-            let g:ackprg .= ' --'.option
-        endif
-    endfor
+    if g:ackprg =~ pattern
+      let g:ackprg = substitute(g:ackprg, pattern, replacement, '')
+    else
+      let g:ackprg .= ' --'.option
+    endif
+  endfor
 
-    echo 'Ack called as: '.g:ackprg
+  echo 'Ack called as: '.g:ackprg
 endfunction
 
 function! s:AckIgnore(bang, ...)
-    for directory in a:000
-        silent call s:AckOption(a:bang, 'ignore-dir="' . directory . '"')
-    endfor
+  for directory in a:000
+    silent call s:AckOption(a:bang, 'ignore-dir="' . directory . '"')
+  endfor
 
-    echo 'Ack called as: '.g:ackprg
+  echo 'Ack called as: '.g:ackprg
 endfunction
 
 function! s:LastSelectedText()
-    let saved_cursor = getpos('.')
+  let saved_cursor = getpos('.')
 
-    let original_reg      = getreg('z')
-    let original_reg_type = getregtype('z')
+  let original_reg      = getreg('z')
+  let original_reg_type = getregtype('z')
 
-    normal! gv"zy
-    let text = @z
+  normal! gv"zy
+  let text = @z
 
-    call setreg('z', original_reg, original_reg_type)
-    call setpos('.', saved_cursor)
+  call setreg('z', original_reg, original_reg_type)
+  call setpos('.', saved_cursor)
 
-    return text
+  return text
 endfunction
 
 command! -bang -nargs=* -complete=file -range=0 Ack call s:Ack('grep<bang>',<q-args>, <count>)
@@ -166,5 +169,3 @@ command! -bang -nargs=* -complete=help LAckHelp call s:AckHelp('lgrep<bang>',<q-
 
 command! -bang -nargs=*                AckOption call s:AckOption('<bang>', <f-args>)
 command! -bang -nargs=* -complete=file AckIgnore call s:AckIgnore('<bang>', <f-args>)
-
-" vim: sw=4

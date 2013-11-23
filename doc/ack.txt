@@ -125,6 +125,7 @@ gv                  open in vertical split silently.
 
 q                   close the quickfix window.
 
-If you wish to turn them off, set g:ackmappings to 0: >
-  let g:ackmappings = 0
+If you wish to turn them off, set `g:ack_apply_qmappings` and/or `g:ack_apply_lmappings` to 0: >
+  let g:ack_apply_qmappings = 0
+  let g:ack_apply_lmappings = 0
 <

@@ -1,3 +1,5 @@
+let s:last_search_args = []
+
 if !exists("g:ack_default_options")
   let g:ack_default_options = " -s -H --nocolor --nogroup --column"
 endif
@@ -64,6 +66,8 @@ if !exists("g:ack_autofold_results")
 endif
 
 function! s:Ack(cmd, args, count)
+  let s:last_search_args = [a:cmd, a:args, a:count]
+
   redraw
   echo "Searching ..."
 
@@ -122,6 +126,15 @@ function! s:Ack(cmd, args, count)
   end
 
   redraw!
+endfunction
+
+function! s:AckRerun()
+  if empty(s:last_search_args)
+    echoerr "There's no previous search to rerun"
+    return
+  endif
+
+  call call('s:Ack', s:last_search_args)
 endfunction
 
 function! s:AckFromSearch(cmd, args)
@@ -193,6 +206,8 @@ function! s:LastSelectedText()
 endfunction
 
 command! -bang -nargs=* -complete=file -range=0 Ack call s:Ack('grep<bang>',<q-args>, <count>)
+
+command! AckRerun call s:AckRerun()
 
 command! -bang -nargs=* -complete=file AckAdd        call s:Ack('grepadd<bang>', <q-args>)
 command! -bang -nargs=* -complete=file AckFromSearch call s:AckFromSearch('grep<bang>', <q-args>)

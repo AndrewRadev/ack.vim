@@ -5,7 +5,8 @@ This fork of `ack.vim` has the following differences over the official version:
   - If `:Ack` is invoked when something is marked in visual mode, that
     something is used as a search term.
   - Ability to manage options and ignore dirs a bit more easily with
-    `AckOption` and `AckIgnore`.
+    `:AckOption` and `:AckIgnore`.
+  - Ability to run the last `:Ack` command again with `:AckRerun`.
 
 See the docs for more details.
 

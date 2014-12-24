@@ -1,16 +1,17 @@
-" NOTE: You must, of course, install the ack script
-"       in your path.
-" On Debian / Ubuntu:
-"   sudo apt-get install ack-grep
-" With MacPorts:
-"   sudo port install p5-app-ack
-" With Homebrew:
-"   brew install ack
+if !exists("g:ack_default_options")
+  let g:ack_default_options = " -s -H --nocolor --nogroup --column"
+endif
 
 " Location of the ack utility
 if !exists("g:ackprg")
-  let s:ackcommand = executable('ack-grep') ? 'ack-grep' : 'ack'
-  let g:ackprg=s:ackcommand." -H --nocolor --nogroup --column"
+  if executable('ack')
+    let g:ackprg = "ack"
+  elseif executable('ack-grep')
+    let g:ackprg = "ack-grep"
+  else
+    finish
+  endif
+  let g:ackprg .= g:ack_default_options
 endif
 
 if !exists("g:ack_apply_qmappings")
@@ -21,12 +22,45 @@ if !exists("g:ack_apply_lmappings")
   let g:ack_apply_lmappings = !exists("g:ack_lhandler")
 endif
 
+if !exists("g:ack_use_dispatch")
+  let g:ack_use_dispatch = 0
+end
+
+let s:ack_mappings = {
+      \ "t": "<C-W><CR><C-W>T",
+      \ "T": "<C-W><CR><C-W>TgT<C-W>j",
+      \ "o": "<CR>",
+      \ "O": "<CR><C-W>p<C-W>c",
+      \ "go": "<CR><C-W>p",
+      \ "h": "<C-W><CR><C-W>K",
+      \ "H": "<C-W><CR><C-W>K<C-W>b",
+      \ "v": "<C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t",
+      \ "gv": "<C-W><CR><C-W>H<C-W>b<C-W>J" }
+
+if exists("g:ack_mappings")
+  let g:ack_mappings = extend(s:ack_mappings, g:ack_mappings)
+else
+  let g:ack_mappings = s:ack_mappings
+endif
+
 if !exists("g:ack_qhandler")
-  let g:ack_qhandler="botright copen"
+  let g:ack_qhandler = "botright copen"
 endif
 
 if !exists("g:ack_lhandler")
-  let g:ack_lhandler="botright lopen"
+  let g:ack_lhandler = "botright lopen"
+endif
+
+if !exists("g:ackhighlight")
+  let g:ackhighlight = 0
+endif
+
+if !exists("g:ack_autoclose")
+  let g:ack_autoclose = 0
+endif
+
+if !exists("g:ack_autofold_results")
+  let g:ack_autofold_results = 0
 endif
 
 function! s:Ack(cmd, args, count)
@@ -159,13 +193,14 @@ function! s:LastSelectedText()
 endfunction
 
 command! -bang -nargs=* -complete=file -range=0 Ack call s:Ack('grep<bang>',<q-args>, <count>)
-command! -bang -nargs=* -complete=file AckAdd call s:Ack('grepadd<bang>', <q-args>)
+
+command! -bang -nargs=* -complete=file AckAdd        call s:Ack('grepadd<bang>', <q-args>)
 command! -bang -nargs=* -complete=file AckFromSearch call s:AckFromSearch('grep<bang>', <q-args>)
-command! -bang -nargs=* -complete=file LAck call s:Ack('lgrep<bang>', <q-args>)
-command! -bang -nargs=* -complete=file LAckAdd call s:Ack('lgrepadd<bang>', <q-args>)
-command! -bang -nargs=* -complete=file AckFile call s:Ack('grep<bang> -g', <q-args>)
-command! -bang -nargs=* -complete=help AckHelp call s:AckHelp('grep<bang>',<q-args>)
-command! -bang -nargs=* -complete=help LAckHelp call s:AckHelp('lgrep<bang>',<q-args>)
+command! -bang -nargs=* -complete=file LAck          call s:Ack('lgrep<bang>', <q-args>)
+command! -bang -nargs=* -complete=file LAckAdd       call s:Ack('lgrepadd<bang>', <q-args>)
+command! -bang -nargs=* -complete=file AckFile       call s:Ack('grep<bang> -g', <q-args>)
+command! -bang -nargs=* -complete=help AckHelp       call s:AckHelp('grep<bang>',<q-args>)
+command! -bang -nargs=* -complete=help LAckHelp      call s:AckHelp('lgrep<bang>',<q-args>)
 
 command! -bang -nargs=*                AckOption call s:AckOption('<bang>', <f-args>)
 command! -bang -nargs=* -complete=file AckIgnore call s:AckIgnore('<bang>', <f-args>)

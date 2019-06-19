@@ -209,11 +209,11 @@ command! -bang -nargs=* -complete=file -range=0 Ack call s:Ack('grep<bang>',<q-a
 
 command! AckRerun call s:AckRerun()
 
-command! -bang -nargs=* -complete=file AckAdd        call s:Ack('grepadd<bang>', <q-args>)
+command! -bang -nargs=* -complete=file AckAdd        call s:Ack('grepadd<bang>', <q-args>, 0)
 command! -bang -nargs=* -complete=file AckFromSearch call s:AckFromSearch('grep<bang>', <q-args>)
-command! -bang -nargs=* -complete=file LAck          call s:Ack('lgrep<bang>', <q-args>)
-command! -bang -nargs=* -complete=file LAckAdd       call s:Ack('lgrepadd<bang>', <q-args>)
-command! -bang -nargs=* -complete=file AckFile       call s:Ack('grep<bang> -g', <q-args>)
+command! -bang -nargs=* -complete=file LAck          call s:Ack('lgrep<bang>', <q-args>, 0)
+command! -bang -nargs=* -complete=file LAckAdd       call s:Ack('lgrepadd<bang>', <q-args>, 0)
+command! -bang -nargs=* -complete=file AckFile       call s:Ack('grep<bang> -g', <q-args>, 0)
 command! -bang -nargs=* -complete=help AckHelp       call s:AckHelp('grep<bang>',<q-args>)
 command! -bang -nargs=* -complete=help LAckHelp      call s:AckHelp('lgrep<bang>',<q-args>)
 
